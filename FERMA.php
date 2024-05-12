@@ -28,12 +28,17 @@ class TableChairCounter
         $this->dateHelper = $dateHelper;
     }
 
+
     public function getDates($year): array
     {
+        if ($year < 2000) {
+            echo "Ошибка: Введенный год должен быть больше или равен 2000 году.\n";
+            exit;
+        }
+
         $dates = [];
         $tables = 0;
         $chairs = 0;
-
 
         for ($currentYear = 2000; $currentYear <= $year; $currentYear++) {
             for ($currentMonth = 1; $currentMonth <= 12; $currentMonth++) {
@@ -75,7 +80,7 @@ class TableChairCounter
 
 $dateHelper = new DateHelper();
 $counter = new TableChairCounter($dateHelper);
-$result = $counter->getDates(2011);
+$result = $counter->getDates(2001);
 
 foreach ($result['dates'] as $date) {
     echo $date . "\n";
