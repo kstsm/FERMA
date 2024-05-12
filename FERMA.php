@@ -28,7 +28,6 @@ class TableChairCounter
         $this->dateHelper = $dateHelper;
     }
 
-
     public function getDates($year): array
     {
         if ($year < 2000) {
