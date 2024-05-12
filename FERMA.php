@@ -13,7 +13,7 @@ class DateHelper
         return date('j', $firstFriday);
     }
 
-    public function format($day, $month, $year): string
+    public function formatDate($day, $month, $year): string
     {
         return strftime("%e-е %b. %Y", mktime(0, 0, 0, $month, $day, $year));
     }
@@ -38,7 +38,7 @@ class TableChairCounter
         for ($currentYear = 2000; $currentYear <= $year; $currentYear++) {
             for ($currentMonth = 1; $currentMonth <= 12; $currentMonth++) {
                 $firstFriday = $this->dateHelper->getFirstFridayInMonth($currentYear, $currentMonth);
-                $date = $this->dateHelper->format($firstFriday, $currentMonth, $currentYear);
+                $date = $this->dateHelper->formatDate($firstFriday, $currentMonth, $currentYear);
                 if ($firstFriday % 2 !== 0) {
                     $tables++;
                     $dates[] = $date;
@@ -54,7 +54,7 @@ class TableChairCounter
             }
             for ($currentMonth = 1; $currentMonth <= 12; $currentMonth++) {
                 $firstFriday = $this->dateHelper->getFirstFridayInMonth($currentYear, $currentMonth);
-                $date = $this->dateHelper->format($firstFriday, $currentMonth, $currentYear);
+                $date = $this->dateHelper->formatDate($firstFriday, $currentMonth, $currentYear);
                 if ($firstFriday % 2 === 0) {
                     $tables++;
                     $dates[] = $date;
@@ -75,10 +75,11 @@ class TableChairCounter
 
 $dateHelper = new DateHelper();
 $counter = new TableChairCounter($dateHelper);
-$result = $counter->getDates(2000);
+$result = $counter->getDates(2011);
 
 foreach ($result['dates'] as $date) {
     echo $date . "\n";
 }
 
 echo "Столы: {$result['tables']}\nСтулья: {$result['chairs']}\n";
+
