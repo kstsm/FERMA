@@ -36,11 +36,11 @@ class TableChairCounter
             echo "Ошибка: Введенный год должен быть больше или равен 2000 году.\n";
             exit;
         }
-
+        $dayTable = [];
         $countTable = 0;
         $countChair = 0;
-        $dayTable = [];
 
+        // Считает и выводит акционные дни столов с 2000 года до указанного.
         for ($currentYear = 2000; $currentYear <= $year; $currentYear++) {
             for ($currentMonth = 1; $currentMonth <= 12; $currentMonth++) {
                 $firstFriday = $this->dateHelper->getFirstFridayInMonth($currentYear, $currentMonth);
@@ -54,6 +54,7 @@ class TableChairCounter
             }
         }
 
+        // Меняет дни акций местами, если чего-то из них больше, до тех пор, пока они не станут равными.
         while ($countTable !== $countChair) {
             if ($countTable < $countChair) {
                 [$countTable, $countChair] = [$countChair, $countTable];
@@ -66,7 +67,9 @@ class TableChairCounter
                     $countTable++;
                 }
             }
-            $currentYear++;
+            if ($countTable !== $countChair) {
+                $currentYear++;
+            }
         }
 
         return [
@@ -77,7 +80,6 @@ class TableChairCounter
         ];
     }
 }
-
 
 $dateHelper = new DateHelper();
 $counter = new TableChairCounter($dateHelper);
