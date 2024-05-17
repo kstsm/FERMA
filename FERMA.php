@@ -2,11 +2,6 @@
 
 class DateHelper
 {
-    public function __construct()
-    {
-        setlocale(LC_ALL, 'ru_RU.utf8');
-    }
-
     public function getFirstFridayInMonth($year, $month): int
     {
         $firstFriday = strtotime("first friday of $year-$month");
@@ -15,7 +10,14 @@ class DateHelper
 
     public function formatDate($day, $month, $year): string
     {
-        return strftime("%e-е %b. %Y", mktime(0, 0, 0, $month, $day, $year));
+        $monthNames = [
+            1 => 'янв.', 5 => 'мая ', 9 => 'сен.',
+            2 => 'фев.', 6 => 'июн.', 10 => 'окт.',
+            3 => 'мар.', 7 => 'июл.', 11 => 'ноя.',
+            4 => 'апр.', 8 => 'авг.', 12 => 'дек.'
+        ];
+
+        return "$day-е $monthNames[$month] $year";
     }
 }
 
@@ -28,62 +30,67 @@ class TableChairCounter
         $this->dateHelper = $dateHelper;
     }
 
-    public function getDates($year): array
+    public function getDates($year)
     {
         if ($year < 2000) {
             echo "Ошибка: Введенный год должен быть больше или равен 2000 году.\n";
             exit;
         }
 
-        $dates = [];
-        $tables = 0;
-        $chairs = 0;
+        $countTable = 0;
+        $countChair = 0;
+        $dayTable = [];
 
         for ($currentYear = 2000; $currentYear <= $year; $currentYear++) {
             for ($currentMonth = 1; $currentMonth <= 12; $currentMonth++) {
                 $firstFriday = $this->dateHelper->getFirstFridayInMonth($currentYear, $currentMonth);
-                $date = $this->dateHelper->formatDate($firstFriday, $currentMonth, $currentYear);
-                if ($firstFriday % 2 !== 0) {
-                    $tables++;
-                    $dates[] = $date;
+                $formatDate = $this->dateHelper->formatDate($firstFriday, $currentMonth, $currentYear);
+                if ($firstFriday % 2) {
+                    $countTable++;
+                    $dayTable[] = $formatDate;
                 } else {
-                    $chairs++;
+                    $countChair++;
                 }
             }
         }
 
-        while ($tables !== $chairs) {
-            if ($tables < $chairs) {
-                [$tables, $chairs] = [$chairs, $tables];
+        while ($countTable !== $countChair) {
+            if ($countTable < $countChair) {
+                [$countTable, $countChair] = [$countChair, $countTable];
             }
             for ($currentMonth = 1; $currentMonth <= 12; $currentMonth++) {
                 $firstFriday = $this->dateHelper->getFirstFridayInMonth($currentYear, $currentMonth);
-                $date = $this->dateHelper->formatDate($firstFriday, $currentMonth, $currentYear);
-                if ($firstFriday % 2 === 0) {
-                    $tables++;
-                    $dates[] = $date;
+                if ($firstFriday % 2) {
+                    $countChair++;
                 } else {
-                    $chairs++;
+                    $countTable++;
                 }
             }
             $currentYear++;
         }
 
         return [
-            'tables' => $tables,
-            'chairs' => $chairs,
-            'dates' => $dates
+            'currentYear' => $currentYear,
+            'countTable' => $countTable,
+            'countChair' => $countChair,
+            'dayTable' => $dayTable,
         ];
     }
 }
 
+
 $dateHelper = new DateHelper();
 $counter = new TableChairCounter($dateHelper);
-$result = $counter->getDates(2001);
 
-foreach ($result['dates'] as $date) {
+echo "Введите год: ";
+$year = fgets(STDIN);
+$result = $counter->getDates($year);
+
+foreach ($result['dayTable'] as $date) {
     echo $date . "\n";
 }
 
-echo "Столы: {$result['tables']}\nСтулья: {$result['chairs']}\n";
+echo "\nАкционый дни столов и стульев сровняются в {$result['currentYear']} и будут равны: \nСтолы:{$result['countTable']} дня\nСтулья:{$result['countChair']} дня\n";
+
+
 
