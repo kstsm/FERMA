@@ -23,11 +23,9 @@ class DateHelper
 
 class TableChairCounter
 {
-    private DateHelper $dateHelper;
 
-    public function __construct(DateHelper $dateHelper)
+    public function __construct(private $dateHelper)
     {
-        $this->dateHelper = $dateHelper;
     }
 
     public function getDates($year)
@@ -36,6 +34,7 @@ class TableChairCounter
             echo "Ошибка: Введенный год должен быть больше или равен 2000 году.\n";
             exit;
         }
+
         $dayTable = [];
         $countTable = 0;
         $countChair = 0;
@@ -54,7 +53,7 @@ class TableChairCounter
             }
         }
 
-        // Меняет дни акций местами, если чего-то из них больше, до тех пор, пока они не станут равными.
+        // Если каких-то акционных дней больше, то он меняет их местами до тех пор, пока они не станут равными.
         while ($countTable !== $countChair) {
             if ($countTable < $countChair) {
                 [$countTable, $countChair] = [$countChair, $countTable];
